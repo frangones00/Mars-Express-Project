@@ -1,0 +1,21 @@
+# The following code was used to transform the "Observation" files (Power measurements). the code transforms each file at a time in order to extract the average of consumption of each power line (column) per hour.
+
+import pandas as pd
+
+# Read in the csv file and parse the timestamp column as a datetime object
+df = pd.read_csv('/Users/frangones/Documents/BAE Project/mars-express-power-3years/train_set/power--2012-05-27_2014-04-14.csv', parse_dates=['ut_ms'])
+
+# Convert the Unix timestamp column to a datetime column
+df['ut_ms'] = pd.to_datetime(df['ut_ms'], unit='ms')
+
+# Confirm the datatype of the column
+print(df['ut_ms'].dtype)
+
+# Set the timestamp column as the index
+df.set_index('ut_ms', inplace=True)
+
+# Resample the data to hourly intervals and calculate the mean of each thermal power line
+hourly_data = df.resample('1H').mean()
+
+# Save the transformed data to a new CSV file
+hourly_data.to_csv('Hourly_Power--2012_2014.csv')
